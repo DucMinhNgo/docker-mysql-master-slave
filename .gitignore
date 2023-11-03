@@ -2,8 +2,8 @@
 .idea
 data
 
-master/data/*
+master/data
 master/conf/*
 
-slave/data/*
+slave/data
 slave/conf/*

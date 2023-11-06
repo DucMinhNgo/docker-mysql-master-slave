@@ -1,34 +1,48 @@
 version: '3'
 services:
-  mysql_master:
-    image: mysql:8.0
-    env_file:
-      - ./master/mysql_master.env
-    container_name: "mysql_master"
-    restart: "no"
+  mysql-master:
+    image: mysql:latest
+    container_name: mysql-master
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: replication_user
+      MYSQL_PASSWORD: replication_password
     ports:
-      - 4406:3306
+      - "1306:3306"
+    # command: "--server-id=1 --log-bin=mysql-bin --binlog-format=row"
+    # command: [ "mysqld", "--loose-group-replication-local-address=mysql-master:6606" ]
     volumes:
-      - ./master/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
-      - ./master/data:/var/lib/mysql
+      - ./data/master:/var/lib/mysql
     networks:
-      - overlay
+      - my-mysql-network
 
-  mysql_slave:
-    image: mysql:8.0
-    env_file:
-      - ./slave/mysql_slave.env
-    container_name: "mysql_slave"
-    restart: "no"
+  mysql-slave-1:
+    image: mysql:latest
+    container_name: mysql-slave-1
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
     ports:
-      - 5506:3306
-    depends_on:
-      - mysql_master
+      - "1307:3306"
+    # command: "--server-id=2 --log-bin=mysql-bin --binlog-format=row --relay-log=mysql-relay-log --slave-skip-errors=all --slave-net-timeout=60 --master-host=master_container_ip --master-user=replication_user --master-password=replication_password --master-port=1306"
+    # command: [ "mysqld", "--loose-group-replication-local-address=mysql-slave-1:6606" ]
+    command: "--server-id=2 --log-bin=mysql-bin --binlog-format=row --relay-log=mysql-relay-log --slave-skip-errors=all --slave-net-timeout=60 --master-user=root"
     volumes:
-      - ./slave/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
-      - ./slave/data:/var/lib/mysql
+      - ./data/slave1:/var/lib/mysql
     networks:
-      - overlay
+      - my-mysql-network
+
+  mysql-slave-2:
+    image: mysql:latest
+    container_name: mysql-slave-2
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3308:3306"
+    command: "--server-id=3 --log-bin=mysql-bin --binlog-format=row --relay-log=mysql-relay-log --slave-skip-errors=all --slave-net-timeout=60 --master-host=mysql-master --master-user=replication_user --master-password=replication_password --master-port=3306"
+    volumes:
+      - ./data/slave2:/var/lib/mysql
+    networks:
+      - my-mysql-network
 
 networks:
-  overlay:
+  my-mysql-network:

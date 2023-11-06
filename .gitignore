@@ -7,3 +7,7 @@ master/conf/*
 
 slave/data
 slave/conf/*
+
+d0/
+d1/
+d2/

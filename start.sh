@@ -1,20 +1,20 @@
-# docker network create replicanet
+docker network create replicanet
 
-# docker run -d --name=master --net=replicanet --hostname=master -p 3308:3306 \
-#   -v $PWD/d0:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=mypass \
-#   mysql/mysql-server:5.7 \
-#   --server-id=1 \
-#   --log-bin='mysql-bin-1.log'
+docker run -d --name=master --net=replicanet --hostname=master -p 3308:3306 \
+  -v $PWD/d0:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=mypass \
+  mysql/mysql-server:5.7 \
+  --server-id=1 \
+  --log-bin='mysql-bin-1.log'
 
-# docker run -d --name=slave1 --net=replicanet --hostname=slave1 -p 3309:3306 \
-#   -v $PWD/d1:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=mypass \
-#   mysql/mysql-server:5.7 \
-#   --server-id=2
+docker run -d --name=slave1 --net=replicanet --hostname=slave1 -p 3309:3306 \
+  -v $PWD/d1:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=mypass \
+  mysql/mysql-server:5.7 \
+  --server-id=2
 
-# docker run -d --name=slave2 --net=replicanet --hostname=slave2 -p 3310:3306 \
-#   -v $PWD/d2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=mypass \
-#   mysql/mysql-server:5.7 \
-#   --server-id=3
+docker run -d --name=slave2 --net=replicanet --hostname=slave2 -p 3310:3306 \
+  -v $PWD/d2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=mypass \
+  mysql/mysql-server:5.7 \
+  --server-id=3
 
 
 # Note update

@@ -1,48 +1,45 @@
 version: '3'
 services:
-  mysql-master:
+  master:
     image: mysql:latest
-    container_name: mysql-master
+    container_name: master
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: mypass
       MYSQL_USER: replication_user
       MYSQL_PASSWORD: replication_password
     ports:
-      - "1306:3306"
-    # command: "--server-id=1 --log-bin=mysql-bin --binlog-format=row"
-    # command: [ "mysqld", "--loose-group-replication-local-address=mysql-master:6606" ]
+      - "3308:3306"
     volumes:
       - ./data/master:/var/lib/mysql
     networks:
-      - my-mysql-network
+      - replicanet
+    command: --server-id=1 --log-bin='mysql-bin-1.log'
 
-  mysql-slave-1:
+  slave1:
     image: mysql:latest
-    container_name: mysql-slave-1
+    container_name: slave1
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: mypass
     ports:
-      - "1307:3306"
-    # command: "--server-id=2 --log-bin=mysql-bin --binlog-format=row --relay-log=mysql-relay-log --slave-skip-errors=all --slave-net-timeout=60 --master-host=master_container_ip --master-user=replication_user --master-password=replication_password --master-port=1306"
-    # command: [ "mysqld", "--loose-group-replication-local-address=mysql-slave-1:6606" ]
-    command: "--server-id=2 --log-bin=mysql-bin --binlog-format=row --relay-log=mysql-relay-log --slave-skip-errors=all --slave-net-timeout=60 --master-user=root"
+      - "3309:3306"
     volumes:
       - ./data/slave1:/var/lib/mysql
     networks:
-      - my-mysql-network
+      - replicanet
+    command: --server-id=2
 
-  mysql-slave-2:
+  slave2:
     image: mysql:latest
-    container_name: mysql-slave-2
+    container_name: slave2
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: mypass
     ports:
-      - "3308:3306"
-    command: "--server-id=3 --log-bin=mysql-bin --binlog-format=row --relay-log=mysql-relay-log --slave-skip-errors=all --slave-net-timeout=60 --master-host=mysql-master --master-user=replication_user --master-password=replication_password --master-port=3306"
+      - "3310:3306"
     volumes:
       - ./data/slave2:/var/lib/mysql
     networks:
-      - my-mysql-network
+      - replicanet
+    command: --server-id=3
 
 networks:
-  my-mysql-network:
+  replicanet:

@@ -16,6 +16,13 @@
 #   mysql/mysql-server:5.7 \
 #   --server-id=3
 
+
+# Note update
+mysql -u root -pmypass
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'mypass' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
 docker exec -it master mysql -uroot -pmypass \
   -e "INSTALL PLUGIN rpl_semi_sync_master SONAME 'semisync_master.so';" \
   -e "SET GLOBAL rpl_semi_sync_master_enabled = 1;" \

@@ -3,6 +3,7 @@ services:
   master:
     image: mysql:latest
     container_name: master
+    hostname: master
     environment:
       MYSQL_ROOT_PASSWORD: mypass
       MYSQL_USER: replication_user
@@ -18,6 +19,7 @@ services:
   slave1:
     image: mysql:latest
     container_name: slave1
+    hostname: slave1
     environment:
       MYSQL_ROOT_PASSWORD: mypass
     ports:
@@ -31,6 +33,7 @@ services:
   slave2:
     image: mysql:latest
     container_name: slave2
+    hostname: slave2
     environment:
       MYSQL_ROOT_PASSWORD: mypass
     ports:
